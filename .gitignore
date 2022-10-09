@@ -1,0 +1,4 @@
+### Ignore the following
+*~
+*.csv
+.ipynb_checkpoints
