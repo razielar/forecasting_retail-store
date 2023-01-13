@@ -2,3 +2,13 @@
 *~
 *.csv
 .ipynb_checkpoints
+*.out
+*.log
+*.aux
+*.run.xml
+*.toc
+*.lof
+*.lot
+*.bbl
+*.blg
+*.bcf
