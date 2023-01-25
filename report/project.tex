@@ -41,7 +41,22 @@ The training data represents 99\% of the data, including dates from 2013-01-01 t
 \section[Data exploration and data cleaning]{Data exploration and data cleaning}
 \label{sec:eda}
 
+Performing an exploratory data analysis (eda) of the sales from the training dataset, we can observe that grocery I, beverages, and produce are the top 3 most consumed products (see \autoref{fig:eda}) . Additionally, store type A, and cluster 5 are the most frequent among their classification.
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/eda/sale_analysis.png}
+  \caption[EDA of sales]{\textbf{EDA of sales}. The plot describes the sales by product, store type, and per cluster (left, right, and below, respectively). Darker blue represents higher sales. }
+  \label{fig:eda}
+\end{figure}
 
+\subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
+\label{sec:st_s_analysis}
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=1\textwidth]{plots/eda/target-time-series-plot-DF-test.png}
+  \caption[EDA of sales]{\textbf{EDA of sales}. The plot describes the sales by product, store type, and per cluster (left, right, and below, respectively). Darker blue represents higher sales. }
+  \label{fig:eda}
+\end{figure}
 
