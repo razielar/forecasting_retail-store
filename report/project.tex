@@ -53,10 +53,18 @@ Performing an exploratory data analysis (eda) of the sales from the training dat
 \subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
 \label{sec:st_s_analysis}
 
+The sales represented by \autoref{fig:target} shows low-peaks at the end of each year, which is explained because the stores are closed at new years. Moreover, we can observe a pattern at each year, with increased sales at the end of the year which overlaps with the Christmas eves, suggesting a seasonal pattern. These patterns are highlighted after smoothing the sales data  with a 7 days moving average (the continuous red lines from the \autoref{fig:target}).
+
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=1\textwidth]{plots/eda/target-time-series-plot-DF-test.png}
-  \caption[EDA of sales]{\textbf{EDA of sales}. The plot describes the sales by product, store type, and per cluster (left, right, and below, respectively). Darker blue represents higher sales. }
-  \label{fig:eda}
+  \includegraphics[width=0.9\textwidth]{plots/eda/target-time-series-plot-DF-testProc.png}
+  \caption[Target time series data]{\textbf{Target time series data}. The y-axis represents the training sales from 2013-01-01 to 2017-08-15, and the x-axis shows the time in days (1,087 days). The sales were aggregated by all stores and products (see \autoref{fig:store_summary}). The raw data, and smoothed data (7 days moving average) are denoted by the continuous blue, and red lines, respectively.}
+  \label{fig:target}
 \end{figure}
+
+The stationary and seasonality are key components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate reliable forecasting. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time. In consequence, we implemented a \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity. Obtaining valuable information about which models are more suitable.
+
+\subsection[Time series Decomposition]{Time series Decomposition}
+\label{sec:decomposition}
+
 
