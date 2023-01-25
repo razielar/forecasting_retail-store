@@ -64,6 +64,16 @@ The sales represented by \autoref{fig:target} shows low-peaks at the end of each
 
 The stationary and seasonality are key components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate reliable forecasting. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time. In consequence, we implemented a \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity. Obtaining valuable information about which models are more suitable.
 
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/eda/seasonal_analysis.png}
+  \caption[Analysis of seasonality]{\textbf{Analysis of seasonality}. The y-axis represents the sales aggregated by month, x-axis shows the analyzed months (from January to December), the horizontal red lines denote the sales average by month (55.5 months).}
+  \label{fig:target}
+\end{figure}
+
+
+
+
 \subsection[Time series Decomposition]{Time series Decomposition}
 \label{sec:decomposition}
 
