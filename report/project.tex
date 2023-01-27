@@ -95,8 +95,56 @@ In terms of seasonality, we aggregate the sales for each month and we can clearl
   \label{fig:seasonal_plot}
 \end{figure}
 
+Holidays are one of the most important factors for seasonality, and the Kaggle dataset provided us with relevant holidays and special events in Ecuador (see \autoref{tab:files}). Thus, we analyzed the effects of holidays on sales (see \autoref{fig:holidays}). We observed a reasonable correlation between holidays and sales. Consequently, holidays must be incorporated on the forecast.  
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.7\textwidth]{plots/eda/holidayeffects.png}
+  \caption[Holidays effect]{\textbf{Holidays effect}. Holidays and special events are represented as yellow, and purple dots, respectively.}
+  \label{fig:holidays}
+\end{figure}
+
+\section[Time-series Forecast]{Time-series Forecast}
+\label{sec:forecast}
+
+The main goal of the project is to generate a reliable forecast using the sales data from Favorita stores. After the eda, we concluded that our data is not stationarity, possesses a strong seasonal effect, and holidays is a factor that should be considered in the forecast.  Therefore, the following models could be implemented:
+
+\begin{itemize}
+\item \textbf{SARIMAX}: \underline{S}easonal \underline{ARIMA} using e\underline{X}ternal data. Further, ARIMA stands for \underline{A}uto-\underline{R}egressive (p: dependence on past values), \underline{I}ntegrated (d: differencing) \underline{M}oving \underline{A}verage (q: dependence on past forecast errors). 
+\item \textbf{LSTM}: \underline{L}ong-\underline{S}hort \underline{T}erm \underline{M}emory.
+\item \textbf{GRU}: \underline{G}ated \underline{R}ecurrent \underline{U}nit.
+\item \textbf{Facebook Prophet}: is a forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
+\item \textbf{NeuralProphet}: is a hybrid forecasting framework based on PyTorch and trained with standard deep learning methods.
+\item \textbf{LightGBM} (or other extreme gradient boosted method, \textit{e.g.} XGBoost): \underline{Light} \underline{G}radient-\underline{B}oosting \underline{M}achine.
+\end{itemize}
 
 
+Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores.
 
+ The reasons to select Facebook Prophet include: a simple and flexible model (further described in below) that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time, low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), and previous experience with the model. 
+
+
+\subsection[Prophet as our Forecast model]{Prophet as our Forecast model}
+\label{sec:forecast_model}
+
+Facebook Prophet or Prophet (we are going to use Prophet from now on) is an automated forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
+
+According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in the following equation:
+
+\[ y(t)= g(t) + s(t) + h(t) + \varepsilon_t  \]
+
+Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents seasonality (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
+
+\subsubsection[Performance Metric]{Performance Metric}
+\label{sec:error}
+
+To assess the performance of our models, we selected the mean absolute percentage error (MAPE) which is defined below:
+
+\[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \mid \frac{A_t - F_t}{A_t} \mid  \]
+
+Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent its error within a percentage scale, where the lower the better. 
+
+\subsection[Forecast results]{Forecast results}
+\label{sec:results}
 
 
