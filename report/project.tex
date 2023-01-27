@@ -45,7 +45,7 @@ The training data represents 99\% of the data, including dates from 2013-01-01 t
 \section[Data exploration and data cleaning]{Data exploration and data cleaning}
 \label{sec:eda}
 
-Performing an exploratory data analysis (eda) of the sales from the training dataset, we can observe that grocery I, beverages, and produce are the top 3 most consumed products (see \autoref{fig:eda}) . Additionally, store type A, and cluster 5 are the most frequent among their classification.
+Performing an exploratory data analysis (eda) of the sales from the training dataset, we can observe that grocery I, beverages, and produce are the top 3 most consumed products (see \autoref{fig:eda}) . Additionally, store type A, and cluster 5 are the most frequent among their classification (\autoref{fig:eda}).
 
 \begin{figure}[!htb]
   \centering
@@ -54,10 +54,8 @@ Performing an exploratory data analysis (eda) of the sales from the training dat
   \label{fig:eda}
 \end{figure}
 
-\subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
-\label{sec:st_s_analysis}
 
-The sales represented by \autoref{fig:target} shows low-peaks at the end of each year, which is explained because the stores are closed at new years. Moreover, we can observe a pattern at each year, with increased sales at the end of the year which overlaps with the Christmas eves, suggesting a seasonal pattern. These patterns are highlighted after smoothing the sales data  with a 7 days moving average (the continuous red lines from the \autoref{fig:target}).
+The sales represented by \autoref{fig:target} shows low-peaks at the end of each year, which is explained because the stores are closed at New years. Moreover, we can observe a pattern at each year, with increased sales at the end of the year which overlaps with the Christmas eves, suggesting a seasonal pattern. These patterns are highlighted after smoothing the sales data  with a 7 days moving average (the continuous red lines from the \autoref{fig:target}).
 
 \begin{figure}[!htb]
   \centering
@@ -66,19 +64,39 @@ The sales represented by \autoref{fig:target} shows low-peaks at the end of each
   \label{fig:target}
 \end{figure}
 
-The stationary and seasonality are key components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate reliable forecasting. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time. In consequence, we implemented a \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity. Obtaining valuable information about which models are more suitable.
+\subsection[Time series Decomposition]{Time series Decomposition}
+\label{sec:decomposition}
+
+Time series are defined as a sequence of data organized in time order. The key components of time-series are: trend, seasonality, and residuals, displayed in \autoref{fig:ts-decomposition}B, \autoref{fig:ts-decomposition}C, and \autoref{fig:ts-decomposition}D, respectively. Trend is the long-term direction of the time series, seasonality describes the periodic behavior such as holidays, and residuals represent the irregular fluctuations that we are not able to predict using the trend and/or seasonality. 
+
+In our target time series, we observe an upward trend, with a clear seasonality factor (this will be further analyzed below), and the residuals do not follow a random pattern. These insights will be used to select an adequate forecast model. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.95\textwidth]{plots/eda/timseries_decomposition.png}
+  \caption[Time series decomposition]{\textbf{Time series decomposition}. \textbf{(A)} Raw sales time series (sames as \autoref{fig:target}). \textbf{(B)} Trend of sales. \textbf{(C)} Seasonality of sales. \textbf{(D)} Residuals of sales. }
+  \label{fig:ts-decomposition}
+\end{figure}
+
+\subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
+\label{sec:st_s_analysis}
+
+
+The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate reliable forecasting. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time.
+
+In consequence, we implemented a \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
+
+In terms of seasonality, we aggregate the sales for each month and we can clearly see on average an increase of sales during December (\autoref{fig:seasonal_plot}), which makes sense because Christmas and New years represent a season of the year with more transactions in other retail businesses. Furthermore, we highlighted February as the lowest sales month. 
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.9\textwidth]{plots/eda/seasonal_analysis.png}
   \caption[Analysis of seasonality]{\textbf{Analysis of seasonality}. The y-axis represents the sales aggregated by month, x-axis shows the analyzed months (from January to December), the horizontal red lines denote the sales average by month (55.5 months).}
-  \label{fig:target}
+  \label{fig:seasonal_plot}
 \end{figure}
 
 
 
 
-\subsection[Time series Decomposition]{Time series Decomposition}
-\label{sec:decomposition}
 
 
