@@ -129,11 +129,34 @@ Ideally, we would like to implement all of the  machine learning models mentione
 
 Facebook Prophet or Prophet (we are going to use Prophet from now on) is an automated forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
 
-According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in the following equation:
+According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in equation (1) :
 
-\[ y(t)= g(t) + s(t) + h(t) + \varepsilon_t  \]
-
+\begin{align}
+y(t)= g(t) + s(t) + h(t) + \varepsilon_t  
+\end{align}
+\begin{align}
+g(t)= (\kappa + a(t)^T\delta)t + (m + a(t)^T\gamma)
+\end{align}  
+\begin{align}
+s(t)= X(t)\beta
+\end{align}
+\begin{align}
+h(t)= Z(t)\kappa
+\end{align}
+\begin{align}
+\varepsilon_t \sim N(0,\sigma^2)
+\end{align}
+  
 Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents seasonality (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
+
+Next, equation (3) which represents seasonality can be further extended as:
+
+\[ X(t) = \left[ cos\left(\frac{2\pi(1)t}{365.25}\right) ,..., sin\left( \frac{2\pi(10)t}{365.25}  \right)     \right]  \]
+
+Finally, equation (4) which represents the effects of holidays is extended as:
+
+\[ Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)]  \]
+
 
 \subsubsection[Prophet Hyperparameters]{Prophet Hyperparameters}
 \label{sec:hyperparameters}
