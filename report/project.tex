@@ -135,16 +135,27 @@ According to Taylor \textit{et al.}, Prophet works best with time series that ha
 
 Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents seasonality (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
 
-\subsubsection[Performance Metric]{Performance Metric}
+\subsubsection[Prophet Hyperparameters]{Prophet Hyperparameters}
+\label{sec:hyperparameters}
+
+Prophet possesses 5 hyperparameters which can be tuned through cross validation. The hyperparameters are: \textbf{1)} \textit{changepoint prior scale}, \textbf{2)} \textit{seasonality prior scale} , \textbf{3)} \textit{holidays prior scale} , \textbf{4)} \textit{seasonality model} , and \textbf{5)} \textit{changepoint range}  (this one not recommended to be tuned according to the Prophet developers).  
+
+In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation with an horizon of 1 year (365 years), period of 180 days, and 730 days for training. Information about cross validation can be found on \href{https://facebook.github.io/prophet/docs/installation.html}{the Prophet site} under the diagnostics section, or at Taylor \textit{et al.} work. 
+
+\subsection[Performance Metric]{Performance Metric}
 \label{sec:error}
 
 To assess the performance of our models, we selected the mean absolute percentage error (MAPE) which is defined below:
 
 \[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \mid \frac{A_t - F_t}{A_t} \mid  \]
 
-Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent its error within a percentage scale, where the lower the better. 
+Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
 
 \subsection[Forecast results]{Forecast results}
 \label{sec:results}
+
+
+
+
 
 
