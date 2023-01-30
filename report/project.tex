@@ -82,11 +82,11 @@ In our target time series, we observe an upward trend, with a clear seasonality 
 \label{sec:st_s_analysis}
 
 
-The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate reliable forecasting. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time.
+The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate a reliable forecast. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time.
 
-In consequence, we implemented a \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
+In consequence, we implemented the \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
 
-In terms of seasonality, we aggregate the sales for each month and we can clearly see on average an increase of sales during December (\autoref{fig:seasonal_plot}), which makes sense because Christmas and New years represent a season of the year with more transactions in other retail businesses. Furthermore, we highlighted February as the lowest sales month. 
+In terms of seasonality, we aggregate the sales for each month and we can clearly see on average an increase of sales during December (\autoref{fig:seasonal_plot}), which makes sense because Christmas and New years represent a season of the year with more transactions in other retail businesses. Furthermore, we highlighted February as the lowest sales month (\autoref{fig:seasonal_plot}). 
 
 \begin{figure}[!htb]
   \centering
@@ -121,7 +121,7 @@ The main goal of the project is to generate a reliable forecast using the sales 
 
 Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores.
 
- The reasons to select Facebook Prophet include: a simple and flexible model (further described in below) that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time, low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), and previous experience with the model. 
+ The reasons to select Facebook Prophet include: a simple and flexible model (further described in below) that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time (using the \textit{L-BFGS}  optimization algorithm) , low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), and previous experience with the model. 
 
 
 \subsection[Prophet as our Forecast model]{Prophet as our Forecast model}
@@ -147,15 +147,18 @@ h(t)= Z(t)\kappa
 \varepsilon_t \sim N(0,\sigma^2)
 \end{align}
   
-Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents seasonality (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
+Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
 
-Next, equation (3) which represents seasonality can be further extended as:
+In equation (2), $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Next, equation (3) represents seasonality which can be further extended as:
 
-\[ X(t) = \left[ cos\left(\frac{2\pi(1)t}{365.25}\right) ,..., sin\left( \frac{2\pi(10)t}{365.25}  \right)     \right]  \]
+\[ s(t) = \sum_{n=1}^N \left( a_n cos\left(\frac{2\pi nt}{P}\right) + b_n sin\left( \frac{2\pi nt}{P}  \right)     \right)  \]
 
-Finally, equation (4) which represents the effects of holidays is extended as:
+Let $P$ be the regular period we expect the time series to have (\textit{e.g.} $P=365.25$ and $P=7$ for yearly and weekly data, respectively). For yearly and weekly seasonality, the authors have found $N = 10$ and $N = 3$ to work well for most series problems, respectively. According to Taylor \textit{et al.}, $\beta \sim Normal(0,\sigma^2)$ to impose a smoothing prior on the
+seasonality. Finally, equation (4) which represents the effects of holidays is extended as:
 
 \[ Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)]  \]
+
+By assuming that the effects of holidays are independent. For each holiday $i$, let $D_i$ be the set of past and future dates for that holiday. And assign each holiday a parameter $\kappa_i$ which is the corresponding change in the forecast. As with seasonality, we use a prior $\kappa \sim Normal(0,\nu^2)$.
 
 
 \subsubsection[Prophet Hyperparameters]{Prophet Hyperparameters}
