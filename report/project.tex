@@ -166,22 +166,48 @@ By assuming that the effects of holidays are independent. For each holiday $i$, 
 
 Prophet possesses 5 hyperparameters which can be tuned through cross validation. The hyperparameters are: \textbf{1)} \textit{changepoint prior scale}, \textbf{2)} \textit{seasonality prior scale} , \textbf{3)} \textit{holidays prior scale} , \textbf{4)} \textit{seasonality model} , and \textbf{5)} \textit{changepoint range}  (this one not recommended to be tuned according to the Prophet developers).  
 
-In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation with an horizon of 1 year (365 years), period of 180 days, and 730 days for training. Information about cross validation can be found on \href{https://facebook.github.io/prophet/docs/installation.html}{the Prophet site} under the diagnostics section, or at Taylor \textit{et al.} work. 
+In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation (CV) with an horizon of 1 year (365 years), period of 180 days, and 730 days for training. Information about CV can be found on \href{https://facebook.github.io/prophet/docs/installation.html}{the Prophet site} under the diagnostics section, or at Taylor \textit{et al.} work. 
 
 \subsection[Performance Metric]{Performance Metric}
 \label{sec:error}
 
 To assess the performance of our models, we selected the mean absolute percentage error (MAPE) which is defined below:
 
-\[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \mid \frac{A_t - F_t}{A_t} \mid  \]
+\[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \left| \frac{A_t - F_t}{A_t} \right|  \]
 
 Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
 
-\subsection[Forecast results]{Forecast results}
+\subsection[Forecast Results]{Forecast Results}
 \label{sec:results}
 
+As described by \autoref{fig:store_summary} and \autoref{fig:eda}, the sales data can be organized by store (54 stores) and by store and family product (1782 combinations). Therefore, as a starting point we aggregate all sales and generate a forecast (1 forecast; see \nameref{sec:general}), then generate a forecast by each store (54 forecasts; see \nameref{sec:forecast-store}), finally we generate  a forecast of each product within each store (1782 forecasts; see \nameref{sec:forecast-product}).
+
+\subsubsection[General Sales Forecast]{General Sales Forecast}
+\label{sec:general}
+
+\autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\% using a half year horizon. After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (lower MAPE) considers the following: \textbf{1)} a multiplicative seasonality mode, \textbf{2)} uses the provided holidays (holiday\_events.csv), and \textbf{3)} a custom regressor representing the store closing days.
+
+We observe a correct modeling of the training data, and correctly modeling the pronounced dips around Christmas and New Year (\autoref{fig:general-forecast}). Additionally, to further interpret the forecast outcome the components of the model are displayed in \autoref{fig:forecast-components}. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_prophet.png}
+  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs: 2015-02-22 and 2016-08-15. Forecast (half year horizon) is represented after the red dashed line. }
+  \label{fig:general-forecast}
+\end{figure}
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{plots/forecast/forecast_prophet-components.png}
+  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs: 2015-02-22 and 2016-08-15. Forecast (half year horizon) is represented after the red dashed line. }
+  \label{fig:forecast-components}
+\end{figure}
 
 
+\subsubsection[Sales Forecast by store]{Sales Forecast by store}
+\label{sec:forecast-store}
 
+\subsubsection[Sales Forecast by store and family-product]{Sales Forecast by store and family-product}
+\label{sec:forecast-product}
 
 
