@@ -216,16 +216,33 @@ The regressor displays the store closing days which explains the models the pron
 \subsubsection[Sales Forecast by Store]{Sales Forecast by Store}
 \label{sec:forecast-store}
 
+Our dataset contains 54 stores. Thus, one time series model was produced to each store leading to 54 different Prophet models. In this scenario, a vanilla Prophet model was fitted to each store. Obtaining a mean MAPE of 36.87\%, twelve random stores are represented by \autoref{fig:forecast-store}, where the orange lines represent the sales forecast by store. For better figure representation the stores are displayed from 2017-05 to 2017-09 to highlight the last dates. 
+
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_bystore.png}
-  \caption[Forecast by Store]{\textbf{Forecast by Store}.}
+  \caption[Forecast by Store]{\textbf{Forecast by Store}. The x-axis represents the dates from 2017-05 to 2017-09, the y-axis shows the sales for each store. The blue and orange lines display the store sales and forecast, respectively.}
   \label{fig:forecast-store}
 \end{figure}
 
+As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization should be implemented to reduce the variance, and achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}). Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory.
+
+\subsubsection[Sales Forecast by store and product]{Sales Forecast by store and product}
+\label{sec:forecast-product}
+
+In this scenario, one vanilla Prophet model was fitted for each product for each store producing a total of 1782 forecasts. As we can see on \autoref{fig:forecast-store-product}, each product for each store presents a completely different sales behavior leading to a more complex forecast problem. On average, we obtained a MAPE of 61.02\%. Consequently, we are not able to suggest to rely on our predictions following this approach. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_bystore_product.png}
+  \caption[Forecast by Store and Product]{\textbf{Forecast by Store and Product}. The x-axis represents the dates from 2017-05 to 2017-09, the y-axis shows the sales for each store and product. The different color lines represent each sales product.}
+  \label{fig:forecast-store-product}
+\end{figure}
+
+\section[Recommendations]{Recommendations}
+\label{sec:recommendations}
 
 
-% \subsubsection[Sales Forecast by store and family-product]{Sales Forecast by store and family-product}
-% \label{sec:forecast-product}
+
 
 
