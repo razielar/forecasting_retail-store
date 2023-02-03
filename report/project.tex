@@ -225,9 +225,11 @@ Our dataset contains 54 stores. Thus, one time series model was produced to each
   \label{fig:forecast-store}
 \end{figure}
 
-As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization should be implemented to reduce the variance, and achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}). Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory.
+As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization should be implemented to reduce the variance, and achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}).
 
-\subsubsection[Sales Forecast by store and product]{Sales Forecast by store and product}
+Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory. In order to have a higher confidence on our predictions a visual inspection should be used before relying on our forecast predictions.
+
+\subsubsection[Sales Forecast by Store and Product]{Sales Forecast by Store and Product}
 \label{sec:forecast-product}
 
 In this scenario, one vanilla Prophet model was fitted for each product for each store producing a total of 1782 forecasts. As we can see on \autoref{fig:forecast-store-product}, each product for each store presents a completely different sales behavior leading to a more complex forecast problem. On average, we obtained a MAPE of 61.02\%. Consequently, we are not able to suggest to rely on our predictions following this approach. 
@@ -239,10 +241,40 @@ In this scenario, one vanilla Prophet model was fitted for each product for each
   \label{fig:forecast-store-product}
 \end{figure}
 
+As \autoref{fig:forecast-store-product} shows each product type presents a different pattern on each store, explaining the low performance of our vanilla Prophet models, the same observation is maintained for all the 54 stores.
+
+In order to improve the predictions performance, we need to tune each model following the same approach of the \nameref{sec:general} (hyperparameter tuning, incorporating the holidays, etc.), but due to computational resources and time constraints these improvements were not implemented. Further improvements will be discussed in the \nameref{sec:next-steps} section. 
+
 \section[Recommendations]{Recommendations}
 \label{sec:recommendations}
 
+After performing general, store-specific, and product-specific forecasts we can recommend incorporating our general and store-specific forecast predictions, the latter after a visual inspection. Our general and store-specific predictions present a reasonable error, and their explainability components are in alignment of what we would expect of the retail business (see \autoref{fig:forecast-components} and \autoref{tab:mape-results}). 
+
+Moreover, the training time of the models is not a constraint, and we could decrease the prediction horizon to decrease the MAPE metric, and retrain the models each month to avoid model drifting. Additional improvements in our general and store-specific will be discussed in the \nameref{sec:next-steps} section.
+
+Generating a reliable forecast for each product within each store could be a great interest for any retail business. Nevertheless, our results show on average a high error rate (see \autoref{tab:mape-results}) and we cannot recommend using our predictions following the product-specific approach. 
+
+\begin{table}[!htb]
+  \caption[Kaggle files description]{\textbf{Forecast Summary Results}. Results are sorted by MAPE.}
+  \begin{scriptsize}
+    \begin{tabulary}{0.65\linewidth}{ccc}
+      \textbf{Forecast Approach} & \textbf{MAPE} & \textbf{Number of Predictions} \\ \hline
+      General Sales Forecast & 22.26\% & 1  \\
+      Sales Forecast by Store & 36.87\% & 54  \\
+      Sales Forecast by Store and Product & 61.02\% & 1782  \\
+    \end{tabulary}
+  \end{scriptsize}
+  \label{tab:mape-results}
+\end{table}
+
+\section[Conclusions]{Conclusions}
+\label{sec:conclusions}
+
+\subsection[Summary Key Findings]{Summary Key Findings}
+\label{sec:key-findings}
 
 
+\subsection[Next Steps]{Next Steps}
+\label{sec:next-steps}
 
 
