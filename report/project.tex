@@ -121,7 +121,7 @@ The main goal of the project is to generate a reliable forecast using the sales 
 
 Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores.
 
- The reasons to select Facebook Prophet include: a simple and flexible model (further described in below) that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time (using the \textit{L-BFGS}  optimization algorithm) , low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), and previous experience with the model. 
+ The reasons to select Facebook Prophet include: a simple and flexible model, see \autoref{eq:prophet_eq}, that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time (using the \textit{L-BFGS}  optimization algorithm) , low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), model explainability, and previous experience with the model. 
 
 
 \subsection[Prophet as our Forecast model]{Prophet as our Forecast model}
@@ -129,18 +129,18 @@ Ideally, we would like to implement all of the  machine learning models mentione
 
 Facebook Prophet or Prophet (we are going to use Prophet from now on) is an automated forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
 
-According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in equation (1) :
+According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in \autoref{eq:prophet_eq}:
 
-\begin{align}
+\begin{align}\label{eq:prophet_eq}
 y(t)= g(t) + s(t) + h(t) + \varepsilon_t  
 \end{align}
-\begin{align}
+\begin{align}\label{eq:trend_eq}
 g(t)= (\kappa + a(t)^T\delta)t + (m + a(t)^T\gamma)
 \end{align}  
-\begin{align}
+\begin{align}\label{eq:seasonal_eq}
 s(t)= X(t)\beta
 \end{align}
-\begin{align}
+\begin{align}\label{eq:holiday_eq}
 h(t)= Z(t)\kappa
 \end{align}
 \begin{align}
@@ -149,12 +149,12 @@ h(t)= Z(t)\kappa
   
 Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
 
-In equation (2), $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Next, equation (3) represents seasonality which can be further extended as:
+In \autoref{eq:trend_eq}, $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Next, \autoref{eq:seasonal_eq} represents seasonality which can be further extended as:
 
 \[ s(t) = \sum_{n=1}^N \left( a_n cos\left(\frac{2\pi nt}{P}\right) + b_n sin\left( \frac{2\pi nt}{P}  \right)     \right)  \]
 
 Let $P$ be the regular period we expect the time series to have (\textit{e.g.} $P=365.25$ and $P=7$ for yearly and weekly data, respectively). For yearly and weekly seasonality, the authors have found $N = 10$ and $N = 3$ to work well for most series problems, respectively. According to Taylor \textit{et al.}, $\beta \sim Normal(0,\sigma^2)$ to impose a smoothing prior on the
-seasonality. Finally, equation (4) which represents the effects of holidays is extended as:
+seasonality. Finally, \autoref{eq:holiday_eq} which represents the effects of holidays is extended as:
 
 \[ Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)]  \]
 
@@ -180,34 +180,44 @@ Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (p
 \subsection[Forecast Results]{Forecast Results}
 \label{sec:results}
 
-As described by \autoref{fig:store_summary} and \autoref{fig:eda}, the sales data can be organized by store (54 stores) and by store and family product (1782 combinations). Therefore, as a starting point we aggregate all sales and generate a forecast (1 forecast; see \nameref{sec:general}), then generate a forecast by each store (54 forecasts; see \nameref{sec:forecast-store}), finally we generate  a forecast of each product within each store (1782 forecasts; see \nameref{sec:forecast-product}).
+The sales data can be organized by store (54 stores) and by store and family product (1782 combinations). Therefore, as a starting point we aggregate all sales and generate 1 forecast (see \nameref{sec:general}). Then, generate a forecast by each store (54 forecasts; see \nameref{sec:forecast-store}). Finally, we generate a forecast of each product within each store (1782 forecasts; see \nameref{sec:forecast-product}).
 
 \subsubsection[General Sales Forecast]{General Sales Forecast}
 \label{sec:general}
 
-\autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\% using a half year horizon. After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (lower MAPE) considers the following: \textbf{1)} a multiplicative seasonality mode, \textbf{2)} uses the provided holidays (holiday\_events.csv), and \textbf{3)} a custom regressor representing the store closing days.
+\autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\% using a half year horizon. After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (the lowest MAPE) considers the following: 
 
-We observe a correct modeling of the training data, and correctly modeling the pronounced dips around Christmas and New Year (\autoref{fig:general-forecast}). Additionally, to further interpret the forecast outcome the components of the model are displayed in \autoref{fig:forecast-components}. 
+\begin{enumerate}
+\item A multiplicative seasonality mode.
+\item Uses the provided holidays (holiday\_events.csv).
+\item Custom regressor representing the store closing days.
+\end{enumerate}
+  
+We observe a correct modeling of the training data, and correctly modeling the pronounced dips around Christmas and New Year (\autoref{fig:general-forecast}). Model explainability is an important factor to select a final model, in addition to performance, and computational training time. Prophet comes with an integrated explanation of the model components including the effects of holidays, weekly and yearly seasonality which helps to assess the performance of the forecast.
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_prophet.png}
-  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs: 2015-02-22 and 2016-08-15. Forecast (half year horizon) is represented after the red dashed line. }
+  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs. Forecast (half year horizon) is represented after the red dashed line. }
   \label{fig:general-forecast}
 \end{figure}
+
+In consequence, the forecast components are displayed in \autoref{fig:forecast-components}. A sales increase is reported on the holiday component (\autoref{fig:forecast-components}A), which is expected in the retail business. In terms of weekly and yearly seasonality, Saturday and Sunday; and December are the periods with the highest sales, respectively (\autoref{fig:forecast-components}B and C).
 
 \begin{figure}[!htb]
   \centering
   \includegraphics[width=0.8\textwidth]{plots/forecast/forecast_prophet-components.png}
-  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs: 2015-02-22 and 2016-08-15. Forecast (half year horizon) is represented after the red dashed line. }
+  \caption[General Forecast Components]{\textbf{General Forecast Components}. The components of the final Prophet model, which considers a multiplicative seasonality, holidays, and a custom regressor represented on \autoref{fig:general-forecast}. \textbf{(A)} The holiday component. \textbf{(B)} Weekly seasonality. \textbf{(C)} Yearly seasonality. \textbf{(D)} Regressor considering the store closing days.}
   \label{fig:forecast-components}
 \end{figure}
 
+The regressor displays the store closing days which explains the models the pronounced dips around Christmas and New Year (\autoref{fig:forecast-components}D). In conclusion, we can state that our proposed models possess a moderate error (MAPE of 22.26\%), and the forecast components are in alignment of what we would expect of the retail business.   
 
 \subsubsection[Sales Forecast by store]{Sales Forecast by store}
 \label{sec:forecast-store}
 
-\subsubsection[Sales Forecast by store and family-product]{Sales Forecast by store and family-product}
-\label{sec:forecast-product}
+
+% \subsubsection[Sales Forecast by store and family-product]{Sales Forecast by store and family-product}
+% \label{sec:forecast-product}
 
 
