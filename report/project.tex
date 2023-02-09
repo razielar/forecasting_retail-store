@@ -110,61 +110,85 @@ Holidays are one of the most important factors for seasonality, and the Kaggle d
 The main goal of the project is to generate a reliable forecast using the sales data from Favorita stores. After the eda, we concluded that our data is not stationarity, possesses a strong seasonal effect, and holidays is a factor that should be considered in the forecast.  Therefore, the following models could be implemented:
 
 \begin{itemize}
-\item \textbf{SARIMAX}: \underline{S}easonal \underline{ARIMA} using e\underline{X}ternal data. Further, ARIMA stands for \underline{A}uto-\underline{R}egressive (p: dependence on past values), \underline{I}ntegrated (d: differencing) \underline{M}oving \underline{A}verage (q: dependence on past forecast errors). 
-\item \textbf{LSTM}: \underline{L}ong-\underline{S}hort \underline{T}erm \underline{M}emory.
-\item \textbf{GRU}: \underline{G}ated \underline{R}ecurrent \underline{U}nit.
-\item \textbf{Facebook Prophet}: is a forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
-\item \textbf{NeuralProphet}: is a hybrid forecasting framework based on PyTorch and trained with standard deep learning methods.
-\item \textbf{LightGBM} (or other extreme gradient boosted method, \textit{e.g.} XGBoost): \underline{Light} \underline{G}radient-\underline{B}oosting \underline{M}achine.
+\item \textbf{SARIMAX}: \underline{S}easonal \underline{ARIMA} using e\underline{X}ogenous data. Further, ARIMA stands for \underline{A}uto-\underline{R}egressive (p: dependence on past values), \underline{I}ntegrated (d: differencing) \underline{M}oving \underline{A}verage (q: dependence on past forecast errors). 
+\item \textbf{LSTM}\autocite{hochreiter1997long}: \underline{L}ong-\underline{S}hort \underline{T}erm \underline{M}emory.
+\item \textbf{GRU}\autocite{cho2014learning}: \underline{G}ated \underline{R}ecurrent \underline{U}nit.
+\item \textbf{Facebook Prophet}\autocite{taylor2018forecasting}: is a forecasting procedure similar to a generalized additive model\autocite{hastie1987generalized} (GAM) where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
+\item \textbf{NeuralProphet}\autocite{triebe2021neuralprophet}: is a hybrid forecasting framework based on PyTorch and trained with standard deep learning methods.
+\item \textbf{LightGBM}\autocite{ke2017lightgbm} (or other extreme gradient boosted method, \textit{e.g.} XGBoost): \underline{Light} \underline{G}radient-\underline{B}oosting \underline{M}achine.
 \end{itemize}
 
 
-Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores.
+Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores. The reasons to select Facebook Prophet include:
 
- The reasons to select Facebook Prophet include: a simple and flexible model, see \autoref{eq:prophet_eq}, that takes into account multiple human scale seasonality, holidays that occur at irregular intervals, trends that are non-linear, short training time (using the \textit{L-BFGS}  optimization algorithm) , low computation-resource demands, a Python module to easily implement the model (under the hood uses Stan), model explainability, and previous experience with the model. 
-
+\begin{enumerate}
+\item A simple and flexible model (see \autoref{eq:prophet_eq}) that takes into account multiple human scale seasonality, and holidays that occur at irregular intervals.
+\item Short training time (using the \textit{L-BFGS}  optimization algorithm\autocite{byrd1995limited}).
+\item Low computation-resource demands.
+\item A Python module to easily implement the model (under the hood uses Stan\autocite{carpenter2017stan}).
+\item Model explainability
+\item Previous experience with the model
+\end{enumerate} 
 
 \subsection[Prophet as our Forecast model]{Prophet as our Forecast model}
 \label{sec:forecast_model}
 
-Facebook Prophet or Prophet (we are going to use Prophet from now on) is an automated forecasting procedure based on a general additive model where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
-
-According to Taylor \textit{et al.}, Prophet works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The additive models contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in \autoref{eq:prophet_eq}:
+According to Taylor \textit{et al.}\autocite{taylor2018forecasting}, Facebook Prophet or Prophet (we are going to use Prophet from now on)  works best with time series that have strong seasonal effects (which is our case see \autoref{fig:ts-decomposition}C, and \autoref{fig:seasonal_plot}), holidays effect (\autoref{fig:holidays}), and typically handles outliers well. The model contains three main components: \textbf{1)} trend, \textbf{2)} seasonality, and \textbf{3)} holidays, which are combined in \autoref{eq:prophet_eq}:
 
 \begin{align}\label{eq:prophet_eq}
 y(t)= g(t) + s(t) + h(t) + \varepsilon_t  
 \end{align}
+
+Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; default prior $\varepsilon \sim N(0,0.5)$.
+
+Prophets implements two types of trend models (logistic and linear trend model). In our project, the linear trend model was used, and can be written as \autoref{eq:trend_eq}. Where $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Additionally, $\delta_j \sim Laplace(0,\tau)$  where $\tau$ regularizes the trend flexibility.  
+
 \begin{align}\label{eq:trend_eq}
 g(t)= (\kappa + a(t)^T\delta)t + (m + a(t)^T\gamma)
 \end{align}  
+
+Next, seasonality $s(t)$ is modeled based on the Fourier series \autoref{eq:seasonal_eq}. Where $P$ represents the regular period we expect the time series to have (\textit{e.g.} $P=365.25$ and $P=7$ for yearly and weekly data, respectively). The term $X(t)\beta$ can be further explained with $X(t)$ and $\beta$ specified as vectors, see \autoref{eq:seasonal_ext} and \autoref{eq:seasonal_beta}. The term $N$ represents the order of the Fourier series. For yearly and weekly seasonality, the authors have found $N = 10$ and $N = 3$ to work well for most series problems, respectively. According to Taylor \textit{et al.}, prior $\beta \sim N(0,\sigma^2)$ where $\sigma$ regularizes the strength of seasonality.
+
 \begin{align}\label{eq:seasonal_eq}
-s(t)= X(t)\beta
+s(t) = \sum_{n=1}^N \left( a_n cos\left(\frac{2\pi nt}{P}\right) + b_n sin\left( \frac{2\pi nt}{P}  \right)  \right) = X(t)\beta
 \end{align}
+
+\begin{align}\label{eq:seasonal_ext}
+X(t) = \left[ cos\left(\frac{2\pi1t}{P} \right), sin\left(\frac{2\pi1t}{P}\right),..cos\left(\frac{2\pi Nt}{P} \right), sin\left(\frac{2\pi Nt}{P}\right)  \right]
+\end{align}
+
+\begin{align}\label{eq:seasonal_beta}
+\beta = [a_1,b_1,...a_N,b_N]
+\end{align}
+
+Subsequently, \autoref{eq:holiday_eq} represents the linear effects of holidays, and can be extended as \autoref{eq:holiday_2} which is a vector of dummies (1 indicates holiday and 0 otherwise), by assuming that the effects of holidays are independent. For each holiday $i$, let $D_i$ be the set of past and future dates for that holiday. And assign each holiday a parameter $\kappa_i$ which is the corresponding change in the forecast. As before, we use a prior $\kappa \sim N(0,\nu^2)$ where $\nu^2$ regularizes the holiday effects.
+
 \begin{align}\label{eq:holiday_eq}
 h(t)= Z(t)\kappa
 \end{align}
-\begin{align}
-\varepsilon_t \sim N(0,\sigma^2)
+
+\begin{align}\label{eq:holiday_2}
+Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)] 
 \end{align}
-  
-Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; under the assumption that $\varepsilon_t$ is normally distributed.
 
-In \autoref{eq:trend_eq}, $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Next, \autoref{eq:seasonal_eq} represents seasonality which can be further extended as:
+Finally, combining all three models described above, we obtain the final model for our time series analysis that can be written as \autoref{eq:final_model}. Then based on the priors of the parameters and the data, we can find maximum a posterior (MAP) estimates for all parameters.
 
-\[ s(t) = \sum_{n=1}^N \left( a_n cos\left(\frac{2\pi nt}{P}\right) + b_n sin\left( \frac{2\pi nt}{P}  \right)     \right)  \]
-
-Let $P$ be the regular period we expect the time series to have (\textit{e.g.} $P=365.25$ and $P=7$ for yearly and weekly data, respectively). For yearly and weekly seasonality, the authors have found $N = 10$ and $N = 3$ to work well for most series problems, respectively. According to Taylor \textit{et al.}, $\beta \sim Normal(0,\sigma^2)$ to impose a smoothing prior on the
-seasonality. Finally, \autoref{eq:holiday_eq} which represents the effects of holidays is extended as:
-
-\[ Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)]  \]
-
-By assuming that the effects of holidays are independent. For each holiday $i$, let $D_i$ be the set of past and future dates for that holiday. And assign each holiday a parameter $\kappa_i$ which is the corresponding change in the forecast. As with seasonality, we use a prior $\kappa \sim Normal(0,\nu^2)$.
+\begin{align}\label{eq:final_model}
+y|m,\delta,\beta,\kappa,\varepsilon \sim N(g(t) + s(t) + h(t), \varepsilon)
+\end{align}
 
 
 \subsubsection[Prophet Hyperparameters]{Prophet Hyperparameters}
 \label{sec:hyperparameters}
 
-Prophet possesses 5 hyperparameters which can be tuned through cross validation. The hyperparameters are: \textbf{1)} \textit{changepoint prior scale}, \textbf{2)} \textit{seasonality prior scale} , \textbf{3)} \textit{holidays prior scale} , \textbf{4)} \textit{seasonality model} , and \textbf{5)} \textit{changepoint range}  (this one not recommended to be tuned according to the Prophet developers).  
+Prophet possesses 4 hyperparameters which can be tuned through cross validation, and are the following:
+
+\begin{enumerate}
+\item \textit{changepoint prior scale}:
+\item \textit{seasonality prior scale}:
+\item \textit{holidays prior scale}:
+\item \textit{seasonality model}:   
+\end{enumerate}
 
 In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation (CV) with an horizon of 1 year (365 years), period of 180 days, and 730 days for training. Information about CV can be found on \href{https://facebook.github.io/prophet/docs/installation.html}{the Prophet site} under the diagnostics section, or at Taylor \textit{et al.} work. 
 
