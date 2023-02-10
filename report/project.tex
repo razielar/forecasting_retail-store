@@ -183,11 +183,26 @@ y|m,\delta,\beta,\kappa,\varepsilon \sim N(g(t) + s(t) + h(t), \varepsilon)
 Prophet possesses 4 hyperparameters which can be tuned through cross validation, and are the following:
 
 \begin{enumerate}
-\item \textit{changepoint prior scale}:
-\item \textit{seasonality prior scale}:
-\item \textit{holidays prior scale}:
-\item \textit{seasonality model}:   
+\item \textit{changepoint prior scale}: Determines the flexibility of the trend, in particular the trend changes, and the trend changepoints. If the value of changepoint prior scale is too small leads to underfit, if too large leads to overfit and in extreme scenarios leads with the trend capturing yearly seasonality. Further, higher values means more changepoints and more flexible trend.
+\item \textit{seasonality prior scale}: Large values allow the seasonality to fit large fluctuations, and small values shrink the magnitude of the seasonality. The default value (see \autoref{tab:hyperparameters}) applies basically no regularization that is because the authors rarely see overfitting here.  
+\item \textit{holidays prior scale}: This controls flexibility to fit holiday effects. Likewise to \textit{seasonality prior scale} the default value applies no regularization, since we usually have multiple holiday observations and can do a good job of estimating their effects. 
+\item \textit{seasonality model}: This term, when possible, is best identified graphically by observing if the magnitude of seasonal fluctuations grows with the time series (multiplicative). Nonetheless, when it is not possible, it could be tuned. 
 \end{enumerate}
+
+\begin{table}[!htb]
+  \caption[Prophet Hyperparameters]{\textbf{Prophet Hyperparameters}. The equation terms are defined above, see \nameref{sec:forecast_model}.}
+  \begin{scriptsize}
+    \begin{tabulary}{0.65\linewidth}{cccc}
+      \textbf{Hyperparameter} & \textbf{Default} & \textbf{Recommended Range} & \textbf{Term} \\ \hline
+      \textit{changepoint prior scale} & 0.05 & [0.001, 0.5] & $\tau$  \\
+      \textit{seasonality prior scale} & 10  & [0.01, 10] & $\sigma$  \\
+      \textit{holidays prior scale} & 10  & [0.01, 10] & $\nu$ \\
+      \textit{seasonality model} & additive  & additive or multiplicative & $g(t) + s(t)$ or  $g(t) * s(t)$ \\
+    \end{tabulary}
+  \end{scriptsize}
+  \label{tab:hyperparameters}
+\end{table}
+
 
 In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation (CV) with an horizon of 1 year (365 years), period of 180 days, and 730 days for training. Information about CV can be found on \href{https://facebook.github.io/prophet/docs/installation.html}{the Prophet site} under the diagnostics section, or at Taylor \textit{et al.} work. 
 
@@ -198,7 +213,7 @@ To assess the performance of our models, we selected the mean absolute percentag
 
 \[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \left| \frac{A_t - F_t}{A_t} \right|  \]
 
-Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
+Where $))A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
 
 \clearpage
 
