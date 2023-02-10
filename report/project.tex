@@ -81,30 +81,30 @@ In our target time series, we observe an upward trend, with a clear seasonality 
 \subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
 \label{sec:st_s_analysis}
 
+The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate a reliable forecast. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time. In consequence, we implemented the \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
 
-The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate a reliable forecast. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time.
 
-In consequence, we implemented the \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.7\textwidth]{plots/eda/seasonal_analysis.png}
+  \caption[Analysis of seasonality]{\textbf{Analysis of seasonality}. The y-axis represents the sales aggregated by month, x-axis shows the analyzed months (from January to December), the horizontal red lines denote the sales average by month (55.5 months).}
+  \label{fig:seasonal_plot}
+\end{figure}
 
 In terms of seasonality, we aggregate the sales for each month and we can clearly see on average an increase of sales during December (\autoref{fig:seasonal_plot}), which makes sense because Christmas and New years represent a season of the year with more transactions in other retail businesses. Furthermore, we highlighted February as the lowest sales month (\autoref{fig:seasonal_plot}). 
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.9\textwidth]{plots/eda/seasonal_analysis.png}
-  \caption[Analysis of seasonality]{\textbf{Analysis of seasonality}. The y-axis represents the sales aggregated by month, x-axis shows the analyzed months (from January to December), the horizontal red lines denote the sales average by month (55.5 months).}
-  \label{fig:seasonal_plot}
-\end{figure}
-
-Holidays are one of the most important factors for seasonality, and the Kaggle dataset provided us with relevant holidays and special events in Ecuador (see \autoref{tab:files}). Thus, we analyzed the effects of holidays on sales (see \autoref{fig:holidays}). We observed a reasonable correlation between holidays and sales. Consequently, holidays must be incorporated on the forecast.  
-
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.7\textwidth]{plots/eda/holidayeffects.png}
+  \includegraphics[width=0.6\textwidth]{plots/eda/holidayeffects.png}
   \caption[Holidays effect]{\textbf{Holidays effect}. Holidays and special events are represented as yellow, and purple dots, respectively.}
   \label{fig:holidays}
 \end{figure}
 
-\section[Time-series Forecast]{Time-series Forecast}
+Holidays are one of the most important factors for seasonality, and the Kaggle dataset provided us with relevant holidays and special events in Ecuador (see \autoref{tab:files}). Thus, we analyzed the effects of holidays on sales (see \autoref{fig:holidays}). We observed a reasonable correlation between holidays and sales. Consequently, holidays must be incorporated on the forecast.  
+
+\clearpage
+
+\section[Time series Models]{Time series Models}
 \label{sec:forecast}
 
 The main goal of the project is to generate a reliable forecast using the sales data from Favorita stores. After the eda, we concluded that our data is not stationarity, possesses a strong seasonal effect, and holidays is a factor that should be considered in the forecast.  Therefore, the following models could be implemented:
@@ -201,12 +201,14 @@ To assess the performance of our models, we selected the mean absolute percentag
 
 Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
 
-\subsection[Forecast Results]{Forecast Results}
+\clearpage
+
+\section[Forecast Results]{Forecast Results}
 \label{sec:results}
 
 The sales data can be organized by store (54 stores) and by store and family product (1782 combinations). Therefore, as a starting point we aggregate all sales and generate 1 forecast (see \nameref{sec:general}). Then, generate a forecast by each store (54 forecasts; see \nameref{sec:forecast-store}). Finally, we generate a forecast of each product within each store (1782 forecasts; see \nameref{sec:forecast-product}).
 
-\subsubsection[General Sales Forecast]{General Sales Forecast}
+\subsection[General Sales Forecast]{General Sales Forecast}
 \label{sec:general}
 
 \autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\% using a half year horizon. After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (the lowest MAPE) considers the following: 
@@ -237,7 +239,7 @@ In consequence, the forecast components are displayed in \autoref{fig:forecast-c
 
 The regressor displays the store closing days which explains the models the pronounced dips around Christmas and New Year (\autoref{fig:forecast-components}D). In conclusion, we can state that our proposed models possess a moderate error (MAPE of 22.26\%), and the forecast components are in alignment of what we would expect of the retail business.   
 
-\subsubsection[Sales Forecast by Store]{Sales Forecast by Store}
+\subsection[Sales Forecast by Store]{Sales Forecast by Store}
 \label{sec:forecast-store}
 
 Our dataset contains 54 stores. Thus, one time series model was produced to each store leading to 54 different Prophet models. In this scenario, a vanilla Prophet model was fitted to each store. Obtaining a mean MAPE of 36.87\%, twelve random stores are represented by \autoref{fig:forecast-store}, where the orange lines represent the sales forecast by store. For better figure representation the stores are displayed from 2017-05 to 2017-09 to highlight the last dates. 
@@ -253,7 +255,7 @@ As expected, we obtained a higher error compared to the general sales forecast (
 
 Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory. In order to have a higher confidence on our predictions a visual inspection should be used before relying on our forecast predictions.
 
-\subsubsection[Sales Forecast by Store and Product]{Sales Forecast by Store and Product}
+\subsection[Sales Forecast by Store and Product]{Sales Forecast by Store and Product}
 \label{sec:forecast-product}
 
 In this scenario, one vanilla Prophet model was fitted for each product for each store producing a total of 1782 forecasts. As we can see on \autoref{fig:forecast-store-product}, each product for each store presents a completely different sales behavior leading to a more complex forecast problem. On average, we obtained a MAPE of 61.02\%. Consequently, we are not able to suggest to rely on our predictions following this approach. 
@@ -269,7 +271,25 @@ As \autoref{fig:forecast-store-product} shows each product type presents a diffe
 
 In order to improve the predictions performance, we need to tune each model following the same approach of the \nameref{sec:general} (hyperparameter tuning, incorporating the holidays, etc.), but due to computational resources and time constraints these improvements were not implemented. Further improvements will be discussed in the \nameref{sec:next-steps} section. 
 
-\section[Recommendations]{Recommendations}
+
+
+% \begin{table}[!htb]
+%   \caption[Kaggle files description]{\textbf{Forecast Summary Results}. Results are sorted by MAPE.}
+%   \begin{scriptsize}
+%     \begin{tabulary}{0.65\linewidth}{ccc}
+%       \textbf{Forecast Approach} & \textbf{MAPE} & \textbf{Number of Predictions} \\ \hline
+%       General Sales Forecast & 22.26\% & 1  \\
+%       Sales Forecast by Store & 36.87\% & 54  \\
+%       Sales Forecast by Store and Product & 61.02\% & 1782  \\
+%     \end{tabulary}
+%   \end{scriptsize}
+%   \label{tab:mape-results}
+% \end{table}
+
+\section[Conclusions]{Conclusions}
+\label{sec:conclusions}
+
+\subsection[Recommendations]{Recommendations}
 \label{sec:recommendations}
 
 After performing general, store-specific, and product-specific forecasts we can recommend incorporating our general and store-specific forecast predictions, the latter after a visual inspection. Our general and store-specific predictions present a reasonable error, and their explainability components are in alignment of what we would expect of the retail business (see \autoref{fig:forecast-components} and \autoref{tab:mape-results}). 
@@ -278,21 +298,6 @@ Moreover, the training time of the models is not a constraint, and we could decr
 
 Generating a reliable forecast for each product within each store could be a great interest for any retail business. Nevertheless, our results show on average a high error rate (see \autoref{tab:mape-results}) and we cannot recommend using our predictions following the product-specific approach. 
 
-\begin{table}[!htb]
-  \caption[Kaggle files description]{\textbf{Forecast Summary Results}. Results are sorted by MAPE.}
-  \begin{scriptsize}
-    \begin{tabulary}{0.65\linewidth}{ccc}
-      \textbf{Forecast Approach} & \textbf{MAPE} & \textbf{Number of Predictions} \\ \hline
-      General Sales Forecast & 22.26\% & 1  \\
-      Sales Forecast by Store & 36.87\% & 54  \\
-      Sales Forecast by Store and Product & 61.02\% & 1782  \\
-    \end{tabulary}
-  \end{scriptsize}
-  \label{tab:mape-results}
-\end{table}
-
-\section[Conclusions]{Conclusions}
-\label{sec:conclusions}
 
 \subsection[Summary Key Findings]{Summary Key Findings}
 \label{sec:key-findings}
