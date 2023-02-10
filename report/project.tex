@@ -293,7 +293,7 @@ Our dataset contains 54 stores. Thus, one time series model was produced to each
 
 As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization (such as $log$ transformation) could be implemented to achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}).
 
-Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory. In order to have a higher confidence on our predictions a visual inspection should be used before relying on our forecast predictions.
+Overall, 88\% of the forecasts can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory. In order to have a higher confidence on our predictions a visual inspection should be used before relying on our forecast predictions.
 
 \subsection[Sales Forecast by Store and Product]{Sales Forecast by Store and Product}
 \label{sec:forecast-product}
@@ -337,6 +337,13 @@ Moreover, the training time of the models is not a constraint, and we could decr
 \subsection[Summary Key Findings]{Summary Key Findings}
 \label{sec:key-findings}
 
+\begin{enumerate}
+\item Our target time series is nonstationary, with an upward trend, clear seasonality factor, and a reasonable correlation with holidays. 
+\item Prophet model is suitable for our dataset, since it does have the types of features that Prophet is modeling such as a human seasonality, and holidays that occur at irregular intervals. Without seasonality and holiday effects, Prophet is just a piecewise linear regression.
+\item We generated a reliable forecast (MAPE of 22.26\%) for general sales implementing a Prophet model with a multiplicative seasonality mode, using the provided holidays, and a custom regressor representing the store closing days. Moreover, the general forecast components are in agreement of what we would expect of the retail business. 
+\item Regarding the sales forecast by store, we reached a moderate result (MAPE of 36.87\%) fitting 54 vanilla Prophet models for each store. Overall, 88\% of the forecasts can be considered as correct with a mean MAPE of 25.96\%. Thus, to incorporate our sales predictions a visual inspection needs to be used.
+\item Sales forecast by store and product fitting a vanilla Prophet model for each combination led to poor results (MAPE of 61.02\%) and our sales predictions can not be implemented for this specific scenario. 
+\end{enumerate}
 
 \subsection[Next Steps]{Next Steps}
 \label{sec:next-steps}
