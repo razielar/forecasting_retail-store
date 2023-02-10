@@ -122,12 +122,11 @@ The main goal of the project is to generate a reliable forecast using the sales 
 Ideally, we would like to implement all of the  machine learning models mentioned above, do a benchmark taking into account: performance, computational-resources, training-time, and model-explainability; and compare their results. Nonetheless, due to time-constraints restrictions, we selected \textbf{Facebook Prophet} as our unique machine learning model to forecast the sales from Favorita stores. The reasons to select Facebook Prophet include:
 
 \begin{enumerate}
-\item A simple and flexible model (see \autoref{eq:prophet_eq}) that takes into account multiple human scale seasonality, and holidays that occur at irregular intervals.
+\item A simple and flexible model (see \autoref{eq:prophet_eq} and  \autoref{eq:final_model}) that takes into account multiple human scale seasonality, and holidays that occur at irregular intervals.
 \item Short training time (using the \textit{L-BFGS}  optimization algorithm\autocite{byrd1995limited}).
-\item Low computation-resource demands.
-\item A Python module to easily implement the model (under the hood uses Stan\autocite{carpenter2017stan}).
-\item Model explainability
-\item Previous experience with the model
+\item Low computation-resource demands and a python module to easily implement the model (under the hood uses Stan\autocite{carpenter2017stan}).
+\item Model explainability.
+\item Previous experience with the model.
 \end{enumerate} 
 
 \subsection[Prophet as our Forecast model]{Prophet as our Forecast model}
@@ -141,7 +140,7 @@ y(t)= g(t) + s(t) + h(t) + \varepsilon_t
 
 Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; default prior $\varepsilon \sim N(0,0.5)$.
 
-Prophets implements two types of trend models (logistic and linear trend model). In our project, the linear trend model was used, and can be written as \autoref{eq:trend_eq}. Where $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Additionally, $\delta_j \sim Laplace(0,\tau)$  where $\tau$ regularizes the trend flexibility.  
+Prophets implements two types of trend models (logistic and linear trend model). In our project, the linear trend with changepoints was used, and can be written as \autoref{eq:trend_eq}. Where $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Additionally, $\delta_j \sim Laplace(0,\tau)$  where $\tau$ regularizes the trend flexibility.  
 
 \begin{align}\label{eq:trend_eq}
 g(t)= (\kappa + a(t)^T\delta)t + (m + a(t)^T\gamma)
@@ -171,7 +170,7 @@ h(t)= Z(t)\kappa
 Z(t) = [1(t \in  D_1) ,..., 1(t \in  D_L)] 
 \end{align}
 
-Finally, combining all three models described above, we obtain the final model for our time series analysis that can be written as \autoref{eq:final_model}. Then based on the priors of the parameters and the data, we can find maximum a posterior (MAP) estimates for all parameters.
+Finally, combining all three models described above, we obtain the final model for our time series analysis that can be written as \autoref{eq:final_model}. Then, based on the five priors of the parameters and the data, we can find maximum a posterior (MAP) estimates for all parameters.
 
 \begin{align}\label{eq:final_model}
 y|m,\delta,\beta,\kappa,\varepsilon \sim N(g(t) + s(t) + h(t), \varepsilon)
