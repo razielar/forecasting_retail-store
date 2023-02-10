@@ -45,7 +45,7 @@ The training data represents 99\% of the data, including dates from 2013-01-01 t
 \section[Data exploration and data cleaning]{Data exploration and data cleaning}
 \label{sec:eda}
 
-Performing an exploratory data analysis (eda) of the sales from the training dataset, we can observe that grocery I, beverages, and produce are the top 3 most consumed products (see \autoref{fig:eda}) . Additionally, store type A, and cluster 5 are the most frequent among their classification (\autoref{fig:eda}).
+Performing an exploratory data analysis (EDA) of the sales from the training dataset, we can observe that grocery I, beverages, and produce are the top 3 most consumed products (see \autoref{fig:eda}) . Additionally, store type A, and cluster 5 are the most frequent among their classification (\autoref{fig:eda}).
 
 \begin{figure}[!htb]
   \centering
@@ -67,7 +67,7 @@ The sales represented by \autoref{fig:target} shows low-peaks at the end of each
 \subsection[Time series Decomposition]{Time series Decomposition}
 \label{sec:decomposition}
 
-Time series are defined as a sequence of data organized in time order. The key components of time-series are: trend, seasonality, and residuals, displayed in \autoref{fig:ts-decomposition}B, \autoref{fig:ts-decomposition}C, and \autoref{fig:ts-decomposition}D, respectively. Trend is the long-term direction of the time series, seasonality describes the periodic behavior such as holidays, and residuals represent the irregular fluctuations that we are not able to predict using the trend and/or seasonality. 
+Time series are defined as a sequence of data organized in time order. The key components of time-series are: trend, seasonality, and residuals, displayed in \autoref{fig:ts-decomposition}B, \autoref{fig:ts-decomposition}C, and \autoref{fig:ts-decomposition}D, respectively. Trend is the long-term direction of the time series, seasonality describes the periodic behavior such as holidays, and residuals represent the irregular fluctuations that we are not able to predict using the trend and/or seasonality.\autocite{moroff2021machine} 
 
 In our target time series, we observe an upward trend, with a clear seasonality factor (this will be further analyzed below), and the residuals do not follow a random pattern. These insights will be used to select an adequate forecast model. 
 
@@ -81,7 +81,7 @@ In our target time series, we observe an upward trend, with a clear seasonality 
 \subsection[Stationarity and seasonality analyses]{Stationarity and seasonality analyses}
 \label{sec:st_s_analysis}
 
-The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate a reliable forecast. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time. In consequence, we implemented the \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
+The stationary and seasonality are relevant components to select the adequate machine learning model (such as ARIMA, SARIMA, etc.) to generate a reliable forecast. A stationary time series is defined, if their statistical properties such as mean, and variance are all constant, and independent of time.\autocite{moroff2021machine,feizabadi2022machine} In consequence, we implemented the \textit{Dickey-Fuller test} to assess stationarity. We obtained a \textit{p-value} of 0.09, using a significance level of 0.05, we can reject the null hypothesis (the series is stationary) concluding that our series is non-stationarity.
 
 
 \begin{figure}[!htb]
@@ -107,10 +107,10 @@ Holidays are one of the most important factors for seasonality, and the Kaggle d
 \section[Time series Models]{Time series Models}
 \label{sec:forecast}
 
-The main goal of the project is to generate a reliable forecast using the sales data from Favorita stores. After the eda, we concluded that our data is not stationarity, possesses a strong seasonal effect, and holidays is a factor that should be considered in the forecast.  Therefore, the following models could be implemented:
+The main goal of the project is to generate a reliable forecast using the sales data from Favorita stores. After the EDA, we concluded that our data is not stationarity, possesses a strong seasonal effect, and holidays is a factor that should be considered in the forecast.  Therefore, the following models could be implemented:
 
 \begin{itemize}
-\item \textbf{SARIMAX}: \underline{S}easonal \underline{ARIMA} using e\underline{X}ogenous data. Further, ARIMA stands for \underline{A}uto-\underline{R}egressive (p: dependence on past values), \underline{I}ntegrated (d: differencing) \underline{M}oving \underline{A}verage (q: dependence on past forecast errors). 
+\item \textbf{SARIMAX}\autocite{hyndman2002state}: \underline{S}easonal \underline{ARIMA} using e\underline{X}ogenous data. Further, ARIMA stands for \underline{A}uto-\underline{R}egressive (p: dependence on past values), \underline{I}ntegrated (d: differencing) \underline{M}oving \underline{A}verage (q: dependence on past forecast errors). 
 \item \textbf{LSTM}\autocite{hochreiter1997long}: \underline{L}ong-\underline{S}hort \underline{T}erm \underline{M}emory.
 \item \textbf{GRU}\autocite{cho2014learning}: \underline{G}ated \underline{R}ecurrent \underline{U}nit.
 \item \textbf{Facebook Prophet}\autocite{taylor2018forecasting}: is a forecasting procedure similar to a generalized additive model\autocite{hastie1987generalized} (GAM) where non-linear trends are fit with yearly, weekly, and daily seasonality, plus holiday effects.
@@ -124,7 +124,7 @@ Ideally, we would like to implement all of the  machine learning models mentione
 \begin{enumerate}
 \item A simple and flexible model (see \autoref{eq:prophet_eq} and  \autoref{eq:final_model}) that takes into account multiple human scale seasonality, and holidays that occur at irregular intervals.
 \item Short training time (using the \textit{L-BFGS}  optimization algorithm\autocite{byrd1995limited}).
-\item Low computation-resource demands and a python module to easily implement the model (under the hood uses Stan\autocite{carpenter2017stan}).
+\item Low computation-resource demands and a Python module to easily implement the model (under the hood uses Stan\autocite{carpenter2017stan}).
 \item Model explainability.
 \item Previous experience with the model.
 \end{enumerate} 
@@ -140,7 +140,7 @@ y(t)= g(t) + s(t) + h(t) + \varepsilon_t
 
 Where $g(t)$ is the \underline{trend} function which models non-periodic changes in the value of the time series, $s(t)$ represents \underline{seasonality} (\textit{e.g.,} weekly and yearly seasonality), and $h(t)$ represents the effects of \underline{holidays} which occur on potentially irregular schedules over one or more days. The error term $\varepsilon_t$ represents changes not explained by the model; default prior $\varepsilon \sim N(0,0.5)$.
 
-Prophets implements two types of trend models (logistic and linear trend model). In our project, the linear trend with changepoints was used, and can be written as \autoref{eq:trend_eq}. Where $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Additionally, $\delta_j \sim Laplace(0,\tau)$  where $\tau$ regularizes the trend flexibility.  
+Prophets implements two types of trend models (logistic and linear trend model). In our project, the linear trend with changepoints was used, and can be written as \autoref{eq:trend_eq}. Where $\kappa$ stands for the growth rate, $\delta$ has the rate adjustments, $m$ is the offset parameter, and $\gamma_j$ is set to $-s_j\delta_j$ to make the function continuous. Additionally, prior $\delta_j \sim Laplace(0,\tau)$  where $\tau$ regularizes the trend flexibility.  
 
 \begin{align}\label{eq:trend_eq}
 g(t)= (\kappa + a(t)^T\delta)t + (m + a(t)^T\gamma)
@@ -203,16 +203,18 @@ Prophet possesses 4 hyperparameters which can be tuned through cross validation,
   \label{tab:hyperparameters}
 \end{table}
 
+\subsubsection[Prophet Cross validation]{Prophet Cross validation}
+\label{sec:cross-validation}
 
 In our work, only the \textit{seasonality mode}  (either additive or multiplicative)  was tuned using cross validation (CV). CV in Prophet uses historical data and compares the forecasted values with the real values. There are three parameters we need to define:
 
 \begin{enumerate}
-\item \textit{initial}: the size of the initial training period. Default: 3*horizon.
-\item \textit{period}: space between two or more training periods, \textit{i.e.} cutoff dates. Default: 0.5*horizon.
+\item \textit{initial}: the size of the initial training period. 
+\item \textit{period}: space between two or more training periods, \textit{i.e.} cutoff dates. 
 \item \textit{horizon}:  forecast horizon, \textit{i.e.} how many days/weeks,months,years are we going to make a forecast on. 
 \end{enumerate}  
 
-In our work, since we have 1087 days we are using the initial 730 days (67.16\%) to predict the next 365 days, although all the results and plots presented show the performance metric (see \nameref{sec:error}) of a half year horizon. The period used was 180 days. \autoref{tab:cv} presents a more detailed description of the used parameters in the cross validation function.
+Since we have 1087 days we are using the initial 730 days (67.16\%) to predict the next 365 days, although all the results and plots presented show the performance metric (see \nameref{sec:error}) of a half year horizon. The period used was 180 days. \autoref{tab:cv} presents a more detailed description of the used parameters in the cross validation function.
 
 \begin{table}[!htb]
   \caption[Cross validation in Prophet]{\textbf{Cross validation in Prophet}. The selected column displays the implemented parameters across all forecast results.}
@@ -227,7 +229,6 @@ In our work, since we have 1087 days we are using the initial 730 days (67.16\%)
   \label{tab:cv}
 \end{table}
 
-
 \subsection[Performance Metric]{Performance Metric}
 \label{sec:error}
 
@@ -235,7 +236,7 @@ To assess the performance of our models, we selected the mean absolute percentag
 
 \[ MAPE= \frac{100\%}{n} \sum_{t=1}^n \left| \frac{A_t - F_t}{A_t} \right|  \]
 
-Where $))A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
+Where $A_t$ is the actual value (true value) and $F_t$ is the forecast result (predicted value). MAPE was selected as a performance metric because of its simplicity to represent the forecast errors within a percentage scale, where the lower the better. 
 
 \clearpage
 
@@ -247,38 +248,41 @@ The sales data can be organized by store (54 stores) and by store and family pro
 \subsection[General Sales Forecast]{General Sales Forecast}
 \label{sec:general}
 
-\autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\% using a half year horizon. After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (the lowest MAPE) considers the following: 
+\autoref{fig:general-forecast} shows the forecast outcome obtained aggregating all the sales, obtaining a MAPE of 22.26\%. 
+
+\begin{figure}[!htb]
+  \centering
+  \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_prophet.png}
+  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. Forecast is represented after the red dashed line. }
+  \label{fig:general-forecast}
+\end{figure}
+
+After experimenting with different hyperparameters and conditions,  the Prophet model with the highest performance (the lowest MAPE) considers the following: 
 
 \begin{enumerate}
 \item A multiplicative seasonality mode.
 \item Uses the provided holidays (holiday\_events.csv).
 \item Custom regressor representing the store closing days.
 \end{enumerate}
-  
-We observe a correct modeling of the training data, and correctly modeling the pronounced dips around Christmas and New Year (\autoref{fig:general-forecast}). Model explainability is an important factor to select a final model, in addition to performance, and computational training time. Prophet comes with an integrated explanation of the model components including the effects of holidays, weekly and yearly seasonality which helps to assess the performance of the forecast.
 
-\begin{figure}[!htb]
-  \centering
-  \includegraphics[width=0.9\textwidth]{plots/forecast/forecast_prophet.png}
-  \caption[General Sales Forecast]{\textbf{General Sales Forecast}. Blue lines denotes the forecast, and black dots describe the actual values. CV was implemented with 730 days leading to 4 forecasts cutoffs. Forecast (half year horizon) is represented after the red dashed line. }
-  \label{fig:general-forecast}
-\end{figure}
+
+We observe a correct modeling of the training data, and correctly modeling the pronounced dips around Christmas and New Year (\autoref{fig:general-forecast}). Model explainability is an important factor to select a final model, in addition to performance, and computational training time. Prophet comes with an integrated explanation of the model components including the effects of holidays, weekly and yearly seasonality which helps to assess the performance of the forecast.
 
 In consequence, the forecast components are displayed in \autoref{fig:forecast-components}. A sales increase is reported on the holiday component (\autoref{fig:forecast-components}A), which is expected in the retail business. In terms of weekly and yearly seasonality, Saturday and Sunday; and December are the periods with the highest sales, respectively (\autoref{fig:forecast-components}B and C).
 
 \begin{figure}[!htb]
   \centering
-  \includegraphics[width=0.8\textwidth]{plots/forecast/forecast_prophet-components.png}
+  \includegraphics[width=0.7\textwidth]{plots/forecast/forecast_prophet-components.png}
   \caption[General Forecast Components]{\textbf{General Forecast Components}. The components of the final Prophet model, which considers a multiplicative seasonality, holidays, and a custom regressor represented on \autoref{fig:general-forecast}. \textbf{(A)} The holiday component. \textbf{(B)} Weekly seasonality. \textbf{(C)} Yearly seasonality. \textbf{(D)} Regressor considering the store closing days.}
   \label{fig:forecast-components}
 \end{figure}
 
-The regressor displays the store closing days which explains the models the pronounced dips around Christmas and New Year (\autoref{fig:forecast-components}D). In conclusion, we can state that our proposed models possess a moderate error (MAPE of 22.26\%), and the forecast components are in alignment of what we would expect of the retail business.   
+The regressor displays the store closing days which explains the pronounced dips around Christmas and New Year (\autoref{fig:forecast-components}D). In conclusion, we can state that our proposed models possess a moderate error (MAPE of 22.26\%), and the forecast components are in alignment of what we would expect of the retail business.   
 
 \subsection[Sales Forecast by Store]{Sales Forecast by Store}
 \label{sec:forecast-store}
 
-Our dataset contains 54 stores. Thus, one time series model was produced to each store leading to 54 different Prophet models. In this scenario, a vanilla Prophet model was fitted to each store. Obtaining a mean MAPE of 36.87\%, twelve random stores are represented by \autoref{fig:forecast-store}, where the orange lines represent the sales forecast by store. For better figure representation the stores are displayed from 2017-05 to 2017-09 to highlight the last dates. 
+Our dataset contains 54 stores. Thus, one time series model was produced to each store leading to 54 different Prophet models. In this scenario, a vanilla Prophet model was fitted to each store. Obtaining a mean MAPE of 36.87\%, twelve random stores are represented by \autoref{fig:forecast-store}, where the orange lines show the sales forecast by store. For better figure representation, the stores are displayed from 2017-05 to 2017-09 to highlight the last dates. 
 
 \begin{figure}[!htb]
   \centering
@@ -287,14 +291,14 @@ Our dataset contains 54 stores. Thus, one time series model was produced to each
   \label{fig:forecast-store}
 \end{figure}
 
-As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization should be implemented to reduce the variance, and achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}).
+As expected, we obtained a higher error compared to the general sales forecast (36.87\% vs. 22.26\%). The reasons are: each store has a different sales pattern, and each Prophet model should be tuned for each store. In addition, a data normalization (such as $log$ transformation) could be implemented to achieve a lower MAPE. Nonetheless some store predictions are reasonable, for instance for stores: 1, 3, 6, and 10 (\autoref{fig:forecast-store}). In contrast, for stores: 7, 8, and 11 the forecasts can be considered as non-correct (\autoref{fig:forecast-store}).
 
 Overall, 88\% of the forecast can be considered as correct with a mean MAPE of 25.96\% (see all the forecast plots at the \href{https://github.com/razielar/forecasting_retail-store}{GitHub repository}). Considering the complexity of time series forecasting and the different sales patterns for each store, we can label our results as satisfactory. In order to have a higher confidence on our predictions a visual inspection should be used before relying on our forecast predictions.
 
 \subsection[Sales Forecast by Store and Product]{Sales Forecast by Store and Product}
 \label{sec:forecast-product}
 
-In this scenario, one vanilla Prophet model was fitted for each product for each store producing a total of 1782 forecasts. As we can see on \autoref{fig:forecast-store-product}, each product for each store presents a completely different sales behavior leading to a more complex forecast problem. On average, we obtained a MAPE of 61.02\%. Consequently, we are not able to suggest to rely on our predictions following this approach. 
+In this scenario, one vanilla Prophet model was fitted for each product for each store producing a total of 1782 forecasts. As we can see on \autoref{fig:forecast-store-product}, each product for each store presents a completely different sales behavior leading to a more complex forecast problem. On average, we obtained a MAPE of 61.02\% (see \autoref{tab:mape-results}). Consequently, we are not able to suggest to rely on our predictions following this approach. 
 
 \begin{figure}[!htb]
   \centering
@@ -305,22 +309,20 @@ In this scenario, one vanilla Prophet model was fitted for each product for each
 
 As \autoref{fig:forecast-store-product} shows each product type presents a different pattern on each store, explaining the low performance of our vanilla Prophet models, the same observation is maintained for all the 54 stores.
 
+\begin{table}[!htb]
+  \caption[Kaggle files description]{\textbf{Forecast Summary Results}. Results are sorted by MAPE.}
+  \begin{scriptsize}
+    \begin{tabulary}{0.65\linewidth}{ccc}
+      \textbf{Forecast Approach} & \textbf{MAPE} & \textbf{Number of Predictions} \\ \hline
+      General Sales Forecast & 22.26\% & 1  \\
+      Sales Forecast by Store & 36.87\% & 54  \\
+      Sales Forecast by Store and Product & 61.02\% & 1782  \\
+    \end{tabulary}
+  \end{scriptsize}
+  \label{tab:mape-results}
+\end{table}
+
 In order to improve the predictions performance, we need to tune each model following the same approach of the \nameref{sec:general} (hyperparameter tuning, incorporating the holidays, etc.), but due to computational resources and time constraints these improvements were not implemented. Further improvements will be discussed in the \nameref{sec:next-steps} section. 
-
-
-
-% \begin{table}[!htb]
-%   \caption[Kaggle files description]{\textbf{Forecast Summary Results}. Results are sorted by MAPE.}
-%   \begin{scriptsize}
-%     \begin{tabulary}{0.65\linewidth}{ccc}
-%       \textbf{Forecast Approach} & \textbf{MAPE} & \textbf{Number of Predictions} \\ \hline
-%       General Sales Forecast & 22.26\% & 1  \\
-%       Sales Forecast by Store & 36.87\% & 54  \\
-%       Sales Forecast by Store and Product & 61.02\% & 1782  \\
-%     \end{tabulary}
-%   \end{scriptsize}
-%   \label{tab:mape-results}
-% \end{table}
 
 \section[Conclusions]{Conclusions}
 \label{sec:conclusions}
@@ -328,12 +330,9 @@ In order to improve the predictions performance, we need to tune each model foll
 \subsection[Recommendations]{Recommendations}
 \label{sec:recommendations}
 
-After performing general, store-specific, and product-specific forecasts we can recommend incorporating our general and store-specific forecast predictions, the latter after a visual inspection. Our general and store-specific predictions present a reasonable error, and their explainability components are in alignment of what we would expect of the retail business (see \autoref{fig:forecast-components} and \autoref{tab:mape-results}). 
+After performing general, store-specific, and product-specific forecasts we can recommend incorporating our general and store-specific forecast predictions, the latter after a visual inspection. Our general and store-specific predictions present a reasonable error, and their explainability components are in alignment of what we would expect of the retail business (see \autoref{fig:forecast-components} and \autoref{tab:mape-results}, respectively). 
 
-Moreover, the training time of the models is not a constraint, and we could decrease the prediction horizon to decrease the MAPE metric, and retrain the models each month to avoid model drifting. Additional improvements in our general and store-specific will be discussed in the \nameref{sec:next-steps} section.
-
-Generating a reliable forecast for each product within each store could be a great interest for any retail business. Nevertheless, our results show on average a high error rate (see \autoref{tab:mape-results}) and we cannot recommend using our predictions following the product-specific approach. 
-
+Moreover, the training time of the models is not a constraint, and we could decrease the prediction horizon to decrease the MAPE metric, and retrain the models each month to avoid model drifting. Additional improvements in our general and store-specific will be discussed in the \nameref{sec:next-steps} section. Generating a reliable forecast for each product within each store could be a great interest for any retail business. Nevertheless, our results show on average a high error rate (see \autoref{tab:mape-results}) and we cannot recommend using our predictions following the product-specific approach. 
 
 \subsection[Summary Key Findings]{Summary Key Findings}
 \label{sec:key-findings}
