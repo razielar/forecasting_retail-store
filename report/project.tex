@@ -214,7 +214,7 @@ In our work, only the \textit{seasonality mode}  (either additive or multiplicat
 \item \textit{horizon}:  forecast horizon, \textit{i.e.} how many days/weeks,months,years are we going to make a forecast on. 
 \end{enumerate}  
 
-Since we have 1087 days we are using the initial 730 days (67.16\%) to predict the next 365 days, although all the results and plots presented show the performance metric (see \nameref{sec:error}) of a half year horizon. The period used was 180 days. \autoref{tab:cv} presents a more detailed description of the used parameters in the cross validation function.
+Since we have 1087 days we are using the initial 730 days (67.16\%) to predict the next 365 days, although all the results and plots presented show the performance metric (see \nameref{sec:error}) of a half year horizon. The period used was 180 days, leading to 4 forecasts with the following cutoffs: 2015-02-22, 2015-08-21, 2016-02-17, and 2016-08-15. \autoref{tab:cv} presents a more detailed description of the used parameters in the cross validation function.
 
 \begin{table}[!htb]
   \caption[Cross validation in Prophet]{\textbf{Cross validation in Prophet}. The selected column displays the implemented parameters across all forecast results.}
@@ -222,7 +222,7 @@ Since we have 1087 days we are using the initial 730 days (67.16\%) to predict t
     \begin{tabulary}{0.65\linewidth}{ccc}
       \textbf{Parameter} & \textbf{Default} & \textbf{Selected} \\ \hline
       \textit{initial} & 3*horizon & 730 days (67.16\%)  \\
-      \textit{period} &  0.5*horizon: 182 days & 180 days   \\
+      \textit{period} &  0.5*horizon: 182 days (2 cutoffs) & 180 days (4 cutoffs)   \\
       \textit{horizon} &   & 365 days  \\
     \end{tabulary}
   \end{scriptsize}
