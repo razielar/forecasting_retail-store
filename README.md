@@ -6,7 +6,7 @@ Kaggle-dataset: [Ecuadorin-based grocery retail store](https://www.kaggle.com/co
 
 ## 2) Results
 
-## 3) Compile the Report
+## 3) Report Compilation
 
 ### 3.1) Installation
 
@@ -28,5 +28,16 @@ sudo apt install texlive-bibtex-extra biber
 
 ```
 
+### 3.2) Report Compilation
 
+To compile the file you need to do the following:
+
+```{bash}
+
+git clone https://github.com/razielar/forecasting_retail-store
+cd report
+./buildReport.sh
+
+```
+The bash-script will generate the **pdf.output** directory with the Report compliled.
 
