@@ -1,12 +1,16 @@
 # Time-series Forecasting
 
-## 1) Data
+1. [Data](#data)
+2. [Results](#results)
+3. [Report Compilation](#report)
+
+## 1) <a id='data'></a> Data
 
 Kaggle-dataset: [Ecuadorin-based grocery retail store](https://www.kaggle.com/competitions/store-sales-time-series-forecasting/data)
 
-## 2) Results
+## 2) <a id='results'></a> Results
 
-## 3) Report Compilation
+## 3) <a id='report'></a> Report Compilation
 
 ### 3.1) Installation
 
