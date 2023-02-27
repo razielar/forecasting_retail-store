@@ -2,6 +2,7 @@
 
 1. [Data](#data)
 2. [Results](#results)
+   - [General Sales Forecast](#general)
 3. [Report Compilation](#report)
 
 ## 1) <a id='data'></a> Data
@@ -9,6 +10,13 @@
 Kaggle-dataset: [Ecuadorin-based grocery retail store](https://www.kaggle.com/competitions/store-sales-time-series-forecasting/data)
 
 ## 2) <a id='results'></a> Results
+
+### 2.1) <a id='general'></a> General Sales Forecast
+
+<div align="center">
+<img src="https://github.com/razielar/forecasting_retail-store/blob/main/report/plots/forecast/forecast_prophet.png" alt="logo"></img>
+</div>
+
 
 ## 3) <a id='report'></a> Report Compilation
 
