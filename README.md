@@ -21,7 +21,7 @@ Kaggle-dataset: [Ecuadorin-based grocery retail store](https://www.kaggle.com/co
 ### 2.2) <a id='store'></a> Sales Forecast by Store
 
 <div align="center">
-<img src="https://github.com/razielar/forecasting_retail-store/blob/main/report/plots/forecast/forecast_bystore.png" alt="logo" width="340" height="200" ></img>
+<img src="https://github.com/razielar/forecasting_retail-store/blob/main/report/plots/forecast/forecast_bystore.png" alt="logo"></img>
 </div>
 
 ## 3) <a id='report'></a> Report Compilation
